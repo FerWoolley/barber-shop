@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | 96 Barber Shop</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme admin-body">
+
+    <!-- Login del administrador: es la única vista visible hasta validar la sesión -->
+    <section id="admin-login-screen" class="admin-login-screen" aria-labelledby="admin-login-title">
+        <div class="admin-login-card">
+            <img src="./assets/logo.jpg" alt="96 Barber Shop" class="admin-login-logo">
+            <div class="admin-login-heading">
+                <span class="admin-login-kicker"><i class="fa-solid fa-shield-halved"></i> Acceso restringido</span>
+                <h1 id="admin-login-title">Panel de Administración</h1>
+                <p>Ingresá tus credenciales para continuar.</p>
+            </div>
+
+            <form id="admin-login-form" class="admin-login-form" novalidate>
+                <div class="form-group">
+                    <label for="admin-email">Email</label>
+                    <div class="admin-credential-field">
+                        <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                        <input
+                            type="email"
+                            id="admin-email"
+                            class="form-control"
+                            name="email"
+                            autocomplete="username"
+                            placeholder="mail@ejemplo.com"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="admin-password">Contraseña</label>
+                    <div class="admin-credential-field">
+                        <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                        <input
+                            type="password"
+                            id="admin-password"
+                            class="form-control"
+                            name="password"
+                            autocomplete="current-password"
+                            placeholder="Ingresá tu contraseña"
+                            required
+                        >
+                    </div>
+                    <p id="admin-login-error" class="admin-login-error" role="alert" aria-live="polite"></p>
+                </div>
+
+                <button type="submit" class="btn btn-primary admin-login-submit">
+                    <i class="fa-solid fa-right-to-bracket"></i> Ingresar
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Todo el panel permanece fuera de la vista mientras no haya sesión -->
+    <div id="admin-panel" class="admin-panel-shell" hidden>
+
+    <!-- Admin Topbar Header -->
+    <header class="admin-header">
+        <div class="container-fluid admin-header-content">
+            <div class="admin-brand">
+                <a href="index.html" class="nav-brand">
+                    <img src="./assets/logo.jpg" alt="96 Barber Shop" class="header-logo">
+                    <span class="brand-text">96 <span>BARBER ADMIN</span></span>
+                </a>
+                <span class="badge-role"><i class="fa-solid fa-shield-halved"></i> Modo Administración</span>
+            </div>
+            <div class="admin-user-info">
+                <span class="admin-current-user" data-current-admin-email></span>
+                <span id="current-date-display" class="current-date"></span>
+                <a href="index.html" class="btn btn-outline-sm"><i class="fa-solid fa-globe"></i> Ver Web Cliente</a>
+            </div>
+            <button
+                id="admin-mobile-menu-toggle"
+                class="admin-mobile-menu-toggle"
+                type="button"
+                aria-label="Abrir menú de administración"
+                aria-controls="admin-mobile-menu"
+                aria-expanded="false"
+            >
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Navegación mobile a pantalla completa -->
+    <div id="admin-mobile-menu" class="admin-mobile-menu" hidden>
+        <div class="admin-mobile-menu-panel" role="dialog" aria-modal="true" aria-labelledby="admin-mobile-menu-title">
+            <div class="admin-mobile-menu-header">
+                <div>
+                    <span class="admin-mobile-menu-kicker">96 Barber Admin</span>
+                    <h2 id="admin-mobile-menu-title">Menú</h2>
+                    <span class="admin-mobile-current-user" data-current-admin-email></span>
+                </div>
+                <button id="admin-mobile-menu-close" class="admin-mobile-menu-close" type="button" aria-label="Cerrar menú">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <nav class="admin-mobile-menu-nav" aria-label="Navegación de administración">
+                <button class="admin-mobile-menu-item active" type="button" data-tab="appointments-tab">
+                    <i class="fa-solid fa-calendar-check"></i> <span>Gestión de turnos</span>
+                </button>
+                <button class="admin-mobile-menu-item" type="button" data-tab="cash-tab">
+                    <i class="fa-solid fa-cash-register"></i> <span>Caja y cobros</span>
+                </button>
+                <button class="admin-mobile-menu-item" type="button" data-tab="inventory-tab">
+                    <i class="fa-solid fa-boxes-stacked"></i> <span>Inventario</span>
+                </button>
+                <button class="admin-mobile-menu-item" type="button" data-tab="crm-tab">
+                    <i class="fa-solid fa-address-book"></i> <span>Clientes</span>
+                </button>
+                <button class="admin-mobile-menu-item" type="button" data-tab="config-tab">
+                    <i class="fa-solid fa-gear"></i> <span>Configuraciones</span>
+                </button>
+                <button class="admin-mobile-menu-item admin-mobile-menu-logout" type="button" data-admin-logout>
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Cerrar sesión</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Admin Main Layout -->
+    <div class="admin-wrapper">
+        <!-- Sidebar Navigation Tabs -->
+        <aside class="admin-sidebar">
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-tab="appointments-tab">
+                    <i class="fa-solid fa-calendar-check"></i> <span>Gestión de Turnos</span>
+                </button>
+                <button class="nav-item" data-tab="cash-tab">
+                    <i class="fa-solid fa-cash-register"></i> <span>Caja y Cobros</span>
+                </button>
+                <button class="nav-item" data-tab="inventory-tab">
+                    <i class="fa-solid fa-boxes-stacked"></i> <span>Inventario</span>
+                </button>
+                <button class="nav-item" data-tab="crm-tab">
+                    <i class="fa-solid fa-address-book"></i> <span>Clientes</span>
+                </button>
+                <button class="nav-item" data-tab="config-tab">
+                    <i class="fa-solid fa-gear"></i> <span>Configuraciones</span>
+                </button>
+                <button id="admin-logout-button" class="nav-item nav-logout" type="button" data-admin-logout>
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Cerrar Sesión</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="admin-content">
+
+            <!-- TAB 1: GESTIÓN DE TURNOS -->
+            <section id="appointments-tab" class="tab-pane active">
+                <div class="tab-header">
+                    <div>
+                        <h2>GESTIÓN DE TURNOS</h2>
+                        <p>Visualiza, filtra y administra las reservas del día y fechas futuras.</p>
+                    </div>
+                    <div class="header-actions">
+                        <label style="font-size: 0.85rem; color: var(--text-muted);">Fecha:</label>
+                        <input type="date" id="admin-date-filter" class="form-control form-control-sm">
+                        <button id="btn-clear-date-filter" class="btn btn-outline-sm" title="Ver Turnos de Todas las Fechas">Ver Todas</button>
+                        
+                        <select id="admin-barber-filter" class="form-control form-control-sm">
+                            <option value="all">Todos los Barberos</option>
+                        </select>
+
+                        <button id="btn-new-appointment-modal" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-plus"></i> Nuevo Turno
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Bar -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon gold"><i class="fa-solid fa-calendar-day"></i></div>
+                        <div>
+                            <h4 id="stat-total-today">0</h4>
+                            <span>Total Filtrados</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fa-solid fa-clock"></i></div>
+                        <div>
+                            <h4 id="stat-pending-today">0</h4>
+                            <span>Pendientes</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+                        <div>
+                            <h4 id="stat-completed-today">0</h4>
+                            <span>Realizados / Cobrados</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fa-solid fa-circle-xmark"></i></div>
+                        <div>
+                            <h4 id="stat-cancelled-today">0</h4>
+                            <span>Cancelados</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appointments Table -->
+                <div class="card margin-top-md">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Cliente</th>
+                                    <th>Teléfono</th>
+                                    <th>Servicio</th>
+                                    <th>Barbero</th>
+                                    <th>Precio</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appointments-tbody">
+                                <tr>
+                                    <td colspan="9" class="text-center">Cargando turnos...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: MÓDULO DE CAJA Y COBROS -->
+            <section id="cash-tab" class="tab-pane">
+                <div class="tab-header">
+                    <div>
+                        <h2>MÓDULO DE CAJA</h2>
+                        <p>Registrá cobros, corregí ventas y consultá el cierre diario de caja.</p>
+                    </div>
+                </div>
+
+                <div class="cash-module-layout">
+                    <!-- Formulario principal de cobro -->
+                    <div class="card cash-charge-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-cash-register gold-text"></i> Registrar Cobro</h3>
+                        </div>
+                        <form id="cash-form" class="cash-form-grid">
+                            <fieldset class="cash-sale-origin cash-field-full">
+                                <legend>Tipo de Venta</legend>
+                                <div class="cash-origin-options">
+                                    <label class="cash-origin-option">
+                                        <input type="radio" name="cash-sale-origin" value="appointment" checked>
+                                        <span><i class="fa-solid fa-calendar-check"></i> Turno Pendiente</span>
+                                    </label>
+                                    <label class="cash-origin-option">
+                                        <input type="radio" name="cash-sale-origin" value="walkin">
+                                        <span><i class="fa-solid fa-store"></i> Cliente sin turno (Mostrador)</span>
+                                    </label>
+                                </div>
+                            </fieldset>
+
+                            <div id="cash-appointment-panel" class="cash-origin-panel cash-field-full">
+                                <div class="form-group">
+                                    <label for="cash-appointment-select">Turno Pendiente de Cobro *</label>
+                                    <select id="cash-appointment-select" class="form-control" required>
+                                        <option value="">-- Seleccionar turno pendiente --</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div id="cash-walkin-panel" class="cash-origin-panel cash-field-full" hidden>
+                                <div class="form-group cash-customer-picker">
+                                    <label for="buscar-cliente-input">Cliente *</label>
+                                    <div class="cash-customer-autocomplete">
+                                        <i class="fa-solid fa-magnifying-glass cash-customer-search-icon" aria-hidden="true"></i>
+                                        <input type="text" id="buscar-cliente-input" class="form-control" placeholder="Buscar por nombre o tipear para crear..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="clientes-dropdown" aria-haspopup="listbox" disabled>
+                                        <ul id="clientes-dropdown" class="custom-dropdown" role="listbox" aria-label="Clientes" hidden></ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cash-service-select">Servicio Realizado *</label>
+                                <select id="cash-service-select" class="form-control" required>
+                                    <option value="">-- Seleccionar Servicio --</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cash-service-price">Precio del Servicio *</label>
+                                <div class="cash-price-field">
+                                    <span aria-hidden="true">$</span>
+                                    <input
+                                        type="number"
+                                        id="cash-service-price"
+                                        class="form-control"
+                                        min="0"
+                                        step="100"
+                                        inputmode="decimal"
+                                        placeholder="0"
+                                        required
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="cash-cross-sale-section cash-field-full">
+                                <div class="cash-cross-sale-heading">
+                                    <div>
+                                        <h4><i class="fa-solid fa-box-open gold-text"></i> Agregar Producto</h4>
+                                        <p>Opcional · Venta cruzada junto al servicio</p>
+                                    </div>
+                                    <span class="badge-gold">Opcional</span>
+                                </div>
+                                <div class="cash-product-grid">
+                                    <div class="form-group">
+                                        <label for="cash-product-select">Producto del Inventario</label>
+                                        <select id="cash-product-select" class="form-control">
+                                            <option value="">-- Sin producto adicional --</option>
+                                        </select>
+                                    </div>
+                                    <div id="cash-product-price-group" class="form-group" hidden>
+                                        <label for="cash-product-price">Precio cobrado por el producto *</label>
+                                        <div class="cash-price-field">
+                                            <span aria-hidden="true">$</span>
+                                            <input type="number" id="cash-product-price" class="form-control" min="0" step="100" inputmode="decimal" placeholder="0">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <section class="cash-live-summary cash-ticket cash-field-full" aria-labelledby="cash-ticket-title">
+                                <header class="cash-ticket-header">
+                                    <div>
+                                        <span class="cash-ticket-eyebrow"><i class="fa-solid fa-receipt"></i> Ticket en tiempo real</span>
+                                        <h4 id="cash-ticket-title">Resumen del Cobro</h4>
+                                    </div>
+                                    <i class="fa-solid fa-scissors cash-ticket-brand-icon" aria-hidden="true"></i>
+                                </header>
+                                <div id="cash-live-summary" class="cash-ticket-content" aria-live="polite" aria-atomic="false">
+                                    <div class="cash-ticket-items">
+                                        <p class="cash-ticket-empty">Seleccioná un servicio para comenzar el cobro.</p>
+                                    </div>
+                                    <div class="cash-ticket-total-row">
+                                        <span>Total a cobrar</span>
+                                        <strong>$0</strong>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <div class="form-group cash-field-full">
+                                <label for="cash-payment-method">Medio de Pago *</label>
+                                <select id="cash-payment-method" class="form-control" required>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Transferencia/MP">Transferencia/MP</option>
+                                </select>
+                            </div>
+
+                            <div class="cash-field-full">
+                                <button type="submit" class="btn btn-primary btn-block cash-submit-button">
+                                    <i class="fa-solid fa-circle-check"></i> Confirmar y Registrar Cobro
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Reporte diario de caja -->
+                    <div class="card cash-report-card">
+                        <div class="card-header cash-report-header">
+                            <div>
+                                <h3><i class="fa-solid fa-chart-line gold-text"></i> Reporte Diario</h3>
+                                <p>Filtrá una fecha para revisar y corregir los cobros registrados.</p>
+                            </div>
+                            <div class="sales-date-filter-wrap">
+                                <label for="sales-date-filter">Fecha del reporte</label>
+                                <input type="date" id="sales-date-filter" class="form-control form-control-sm">
+                            </div>
+                        </div>
+
+                        <div class="table-responsive margin-top-md">
+                            <table class="data-table cash-sales-table">
+                                <thead>
+                                    <tr>
+                                        <th>Hora</th>
+                                        <th>Cliente</th>
+                                        <th>Detalle</th>
+                                        <th>Medio de Pago</th>
+                                        <th>Monto</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sales-tbody">
+                                    <tr>
+                                        <td colspan="6" class="text-center">No hay cobros registrados para esta fecha.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="cash-summary-grid" aria-label="Resumen de caja del día filtrado">
+                            <article class="cash-summary-card cash-summary-total-card">
+                                <div class="cash-summary-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+                                <span>TOTAL RECAUDADO</span>
+                                <strong id="cash-summary-total">$0</strong>
+                            </article>
+                            <article class="cash-summary-card cash-summary-cash-card">
+                                <div class="cash-summary-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
+                                <span>Total Efectivo</span>
+                                <strong id="cash-summary-cash">$0</strong>
+                            </article>
+                            <article class="cash-summary-card cash-summary-transfer-card">
+                                <div class="cash-summary-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                                <span>Total Transferencia/MP</span>
+                                <strong id="cash-summary-transfer">$0</strong>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: INVENTARIO (CON SUBIDA DE IMAGEN LOCAL BASE64) -->
+            <section id="inventory-tab" class="tab-pane">
+                <div class="tab-header">
+                    <div>
+                        <h2>INVENTARIO DE PRODUCTOS</h2>
+                        <p>Administra el inventario de productos visibles para los clientes en la web.</p>
+                    </div>
+                    <button id="btn-new-product-modal" class="btn btn-primary btn-sm">
+                        <i class="fa-solid fa-plus"></i> Añadir Producto
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Producto</th>
+                                    <th>Categoría</th>
+                                    <th>Descripción Breve</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-tbody">
+                                <tr>
+                                    <td colspan="5" class="text-center">Cargando inventario...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: CLIENTES -->
+            <section id="crm-tab" class="tab-pane">
+                <div class="tab-header">
+                    <div>
+                        <h2>CLIENTES</h2>
+                        <p>Haz clic en el nombre del cliente para ver su historial de visitas completas o edita sus notas directamente.</p>
+                    </div>
+                    <button id="btn-new-customer-modal" class="btn btn-primary btn-sm" type="button">
+                        <i class="fa-solid fa-user-plus"></i> + Nuevo Cliente
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="crm-search-input" class="form-control" placeholder="Buscar por Nombre o Teléfono...">
+                    </div>
+                </div>
+
+                <div class="crm-results-grid margin-top-md" id="crm-results-grid">
+                    <!-- Tarjetas de clientes cargadas desde admin.js -->
+                </div>
+            </section>
+
+            <!-- TAB 5: CONFIGURACIONES -->
+            <section id="config-tab" class="tab-pane">
+                <div class="tab-header">
+                    <div>
+                        <h2>CONFIGURACIONES DEL NEGOCIO</h2>
+                        <p>Administra los precios/nombres de los servicios y edita los perfiles del equipo de barberos.</p>
+                    </div>
+                </div>
+
+                <div class="cash-grid">
+                    <!-- Config Servicios -->
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3><i class="fa-solid fa-list gold-text"></i> Precios de Servicios</h3>
+                            <button id="btn-add-service-modal" class="btn btn-outline-sm">+ Nuevo Servicio</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Servicio</th>
+                                        <th>Precio ($)</th>
+                                        <th>Duración</th>
+                                        <th>Editar</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="config-services-tbody">
+                                    <tr>
+                                        <td colspan="4" class="text-center">Cargando servicios...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Config Barberos -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-user-ninja gold-text"></i> Equipo de Barberos</h3>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Barbero</th>
+                                        <th>Descripción (Experiencia)</th>
+                                        <th>Especialidades (Chips)</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="config-barbers-tbody">
+                                    <tr>
+                                        <td colspan="4" class="text-center">Cargando barberos...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Gestión de accesos administrativos -->
+                    <div class="card admin-users-card">
+                        <div class="card-header admin-users-card-header">
+                            <div>
+                                <h3><i class="fa-solid fa-user-shield gold-text"></i> Administradores</h3>
+                                <p>Gestioná los usuarios con acceso a este panel.</p>
+                            </div>
+                            <span id="admin-users-permission-note" class="admin-users-permission-note"></span>
+                        </div>
+
+                        <form id="admin-user-form" class="admin-user-form" novalidate>
+                            <div class="form-group">
+                                <label for="new-admin-email">Email</label>
+                                <input
+                                    type="email"
+                                    id="new-admin-email"
+                                    class="form-control"
+                                    autocomplete="off"
+                                    placeholder="nuevo@96barbershop.com"
+                                    required
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="new-admin-password">Contraseña</label>
+                                <input
+                                    type="password"
+                                    id="new-admin-password"
+                                    class="form-control"
+                                    autocomplete="new-password"
+                                    minlength="6"
+                                    placeholder="Mínimo 6 caracteres"
+                                    required
+                                >
+                            </div>
+                            <button id="btn-add-admin-user" type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-user-plus"></i> Agregar administrador
+                            </button>
+                        </form>
+
+                        <div class="table-responsive margin-top-md">
+                            <table class="data-table admin-users-table">
+                                <thead>
+                                    <tr>
+                                        <th>Email</th>
+                                        <th>Rol</th>
+                                        <th>Nueva contraseña</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-users-tbody">
+                                    <tr>
+                                        <td colspan="4" class="text-center">Cargando administradores...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL: EDITAR COBRO REGISTRADO -->
+    <div id="modal-sale-edit" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-sale-edit-title">
+        <div class="modal-content sale-edit-modal-content">
+            <div class="modal-header">
+                <h3 id="modal-sale-edit-title"><i class="fa-solid fa-pen-to-square gold-text"></i> Editar Cobro</h3>
+                <button type="button" class="sale-edit-modal-close" aria-label="Cerrar modal">&times;</button>
+            </div>
+            <p id="edit-sale-context" class="edit-sale-context"></p>
+            <form id="sale-edit-form">
+                <input type="hidden" id="edit-sale-id">
+                <div class="form-group">
+                    <label for="edit-sale-service">Servicio *</label>
+                    <select id="edit-sale-service" class="form-control" required>
+                        <option value="">-- Seleccionar Servicio --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-sale-total">Monto Total *</label>
+                    <div class="cash-price-field">
+                        <span aria-hidden="true">$</span>
+                        <input type="number" id="edit-sale-total" class="form-control" min="0" step="100" inputmode="decimal" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-sale-payment-method">Medio de Pago *</label>
+                    <select id="edit-sale-payment-method" class="form-control" required>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Transferencia/MP">Transferencia/MP</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline sale-edit-modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: NUEVO CLIENTE -->
+    <div id="modal-customer-create" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-customer-create-title">
+        <div class="modal-content customer-create-modal-content">
+            <div class="modal-header">
+                <h3 id="modal-customer-create-title"><i class="fa-solid fa-user-plus gold-text"></i> Nuevo Cliente</h3>
+                <button type="button" class="customer-create-modal-close" aria-label="Cerrar modal">&times;</button>
+            </div>
+            <p class="customer-create-intro">Creá una ficha para usarla en Caja y conservar su historial.</p>
+            <form id="customer-create-form">
+                <div class="form-group">
+                    <label for="customer-create-name">Nombre completo *</label>
+                    <input type="text" id="customer-create-name" class="form-control" autocomplete="name" placeholder="Ej. Juan Pérez" required>
+                </div>
+                <div class="form-group">
+                    <label for="customer-create-phone">Teléfono *</label>
+                    <input type="tel" id="customer-create-phone" class="form-control" autocomplete="tel" placeholder="Ej. 1123058053" required>
+                </div>
+                <div class="form-group">
+                    <label for="customer-create-notes">Notas (Opcional)</label>
+                    <textarea id="customer-create-notes" class="form-control" rows="4" placeholder="Preferencias, observaciones o indicaciones del cliente..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline customer-create-modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Cliente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: HISTORIAL DE VISITAS DE CLIENTE -->
+    <div id="modal-customer-history" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-history-title">Historial de Visitas</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Servicio Realizado</th>
+                            <th>Barbero</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modal-history-tbody">
+                        <tr>
+                            <td colspan="6" class="text-center">Cargando historial...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline modal-cancel">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR / CREAR SERVICIO -->
+    <div id="modal-service" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-service-title">Editar Servicio</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="admin-service-form">
+                <input type="hidden" id="srv-id">
+                <div class="form-group">
+                    <label for="srv-name">Nombre del Servicio *</label>
+                    <input type="text" id="srv-name" class="form-control" required placeholder="Ej. Corte a máquina">
+                </div>
+                <div class="form-group">
+                    <label for="srv-price">Precio ($) *</label>
+                    <input type="number" id="srv-price" class="form-control" required min="0" placeholder="10000">
+                </div>
+                <div class="form-group">
+                    <label for="srv-duration">Duración (minutos) *</label>
+                    <input type="number" id="srv-duration" class="form-control" required min="15" step="15" value="30">
+                </div>
+                <div class="form-group">
+                    <label for="srv-description">Descripción</label>
+                    <textarea id="srv-description" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Servicio</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR BARBERO (CON CAMPO ESPECIALIDADES) -->
+    <div id="modal-barber" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Barbero</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="admin-barber-form">
+                <input type="hidden" id="barber-id">
+                <div class="form-group">
+                    <label for="barber-name">Nombre del Barbero *</label>
+                    <input type="text" id="barber-name" class="form-control" required placeholder="Ej. Franco 'El Barbero'">
+                </div>
+                <div class="form-group">
+                    <label for="barber-experience">Descripción (Experiencia) *</label>
+                    <textarea id="barber-experience" class="form-control" rows="3" required placeholder="Ej. 8 años de experiencia en barbería tradicional y cortes modernos..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="barber-specialties">Especialidades (separadas por coma) *</label>
+                    <input type="text" id="barber-specialties" class="form-control" required placeholder="Ej. Corte clásico, Degradado, Barba">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: NUEVO TURNO DESDE ADMIN -->
+    <div id="modal-appointment" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nuevo Turno Manual</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="admin-new-appointment-form">
+                <div class="form-group">
+                    <label for="admin-new-name">Nombre Cliente *</label>
+                    <input type="text" id="admin-new-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-new-phone">Teléfono *</label>
+                    <input type="tel" id="admin-new-phone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-new-service">Servicio *</label>
+                    <select id="admin-new-service" class="form-control" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="admin-new-barber">Barbero *</label>
+                    <select id="admin-new-barber" class="form-control" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="admin-new-date">Fecha *</label>
+                    <input type="date" id="admin-new-date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-new-time">Hora *</label>
+                    <input type="time" id="admin-new-time" class="form-control" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Turno</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: AÑADIR / EDITAR PRODUCTO EN INVENTARIO CON SUBIDA DE IMAGEN BASE64 -->
+    <div id="modal-product" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-product-title">Añadir Producto al Inventario</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="admin-new-product-form">
+                <input type="hidden" id="prod-id">
+                <div class="form-group">
+                    <label for="prod-name">Nombre del Producto *</label>
+                    <input type="text" id="prod-name" class="form-control" required placeholder="Ej. Polvo Voluminizador 96">
+                </div>
+                <div class="form-group">
+                    <label for="prod-category">Categoría *</label>
+                    <select id="prod-category" class="form-control" required>
+                        <option value="Styling">Styling / Peinado</option>
+                        <option value="Barba">Cuidado de Barba</option>
+                        <option value="Shampoo">Shampoo & Capilar</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="prod-description">Descripción Breve *</label>
+                    <textarea id="prod-description" class="form-control" rows="2" required placeholder="Breve descripción para el inventario..."></textarea>
+                </div>
+
+                <!-- CAMPO DE SUBIDA DE IMAGEN LOCAL (FILE INPUT) CON BASE64 -->
+                <div class="form-group">
+                    <label for="prod-image-file"><i class="fa-solid fa-image gold-text"></i> Imagen del Producto (Subir Archivo Local)</label>
+                    <input type="file" id="prod-image-file" class="form-control" accept="image/*">
+                    <div class="image-preview-container">
+                        <img id="prod-image-preview" src="" alt="Vista Previa" class="image-preview-img" style="display: none;">
+                        <span id="prod-image-status" style="font-size: 0.8rem; color: var(--text-muted);">Formatos aceptados: JPG, PNG, WEBP (Si no seleccionas un archivo nuevo, se conserva la imagen existente)</span>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-product">Guardar Producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/app/admin.js"></script>
+</body>
+</html>

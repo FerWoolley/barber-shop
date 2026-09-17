@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>96 Barber Shop | General Belgrano</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- FontAwesome para Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+
+    <!-- Splash Screen (Pantalla de carga inicial con logo oficial) -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <img src="./assets/logo.jpg" alt="96 Barber Shop" class="splash-logo">
+            <h2 class="splash-title">96 BARBER SHOP</h2>
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="nav-brand">
+                <img src="./assets/logo.jpg" alt="96 Barber Shop" class="header-logo">
+                <span class="brand-text">96 <span>BARBER SHOP</span></span>
+            </a>
+            <nav class="nav-links" id="nav-links">
+                <a href="#hero">Inicio</a>
+                <a href="#services">Servicios</a>
+                <a href="#barbers">Barberos</a>
+                <a href="#products">Inventario</a>
+                <a href="#location">Ubicación</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="#booking" class="btn btn-primary"><i class="fa-regular fa-calendar-check"></i> Reservar Turno</a>
+                <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Abrir menú">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <span class="badge-gold">ESTILO & TRADICIÓN • GENERAL BELGRANO</span>
+            <h1 class="hero-title">96 BARBER SHOP - EXPERIENCIA DE CORTE Y BARBA</h1>
+            <p class="hero-subtitle">Reserva tu turno en línea con cita previa (09:00 a 16:00 hs) o visítanos por orden de llegada a partir de las 17:00 hs.</p>
+            <div class="hero-buttons">
+                <a href="#booking" class="btn btn-primary btn-lg">Reservar Cita Previa</a>
+                <a href="#services" class="btn btn-outline btn-lg">Ver Servicios</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services-section section-padding">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">LO QUE HACEMOS</span>
+                <h2 class="section-title">NUESTROS SERVICIOS</h2>
+                <div class="divider"></div>
+            </div>
+            <div class="services-grid" id="services-grid">
+                <!-- Se puebla dinámicamente desde client.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Team / Barbers Section -->
+    <section id="barbers" class="barbers-section section-padding bg-darker">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">PROFESIONALES DE CONFIANZA</span>
+                <h2 class="section-title">NUESTRO EQUIPO DE BARBEROS</h2>
+                <div class="divider"></div>
+            </div>
+            <div class="barbers-grid" id="barbers-grid">
+                <!-- Se puebla dinámicamente desde client.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="booking" class="booking-section section-padding">
+        <div class="container">
+            <div class="booking-card">
+                <div class="booking-header">
+                    <span class="section-subtitle">SISTEMA DE TURNOS</span>
+                    <h2>RESERVA TU CITA PREVIA</h2>
+                    <p>Atención con turno reservado de <strong>Lunes a Sábados de 09:00 a 16:00 hs</strong>.</p>
+                </div>
+                
+                <form id="booking-form" class="booking-form">
+                    <div class="form-grid">
+                        <!-- 1. Servicio -->
+                        <div class="form-group">
+                            <label for="booking-service"><i class="fa-solid fa-list gold-text"></i> Servicio *</label>
+                            <select id="booking-service" class="form-control" required>
+                                <option value="">Cargando servicios...</option>
+                            </select>
+                        </div>
+
+                        <!-- 2. Barbero -->
+                        <div class="form-group">
+                            <label for="booking-barber"><i class="fa-solid fa-user-ninja gold-text"></i> Barbero *</label>
+                            <select id="booking-barber" class="form-control" required>
+                                <option value="">Selecciona un servicio primero...</option>
+                            </select>
+                        </div>
+
+                        <!-- 3. Fecha -->
+                        <div class="form-group">
+                            <label for="booking-date"><i class="fa-regular fa-calendar-days gold-text"></i> Fecha *</label>
+                            <input type="date" id="booking-date" class="form-control" required>
+                        </div>
+
+                        <!-- 4. Hora disponible -->
+                        <div class="form-group">
+                            <label for="booking-time"><i class="fa-regular fa-clock gold-text"></i> Horario Disponible (09:00 a 16:00 hs) *</label>
+                            <select id="booking-time" class="form-control" required disabled>
+                                <option value="">Selecciona fecha y barbero...</option>
+                            </select>
+                        </div>
+
+                        <!-- 5. Nombre del Cliente -->
+                        <div class="form-group">
+                            <label for="booking-name"><i class="fa-regular fa-user gold-text"></i> Tu Nombre Completo *</label>
+                            <input type="text" id="booking-name" class="form-control" placeholder="Ej. Juan Pérez" required>
+                        </div>
+
+                        <!-- 6. Teléfono -->
+                        <div class="form-group">
+                            <label for="booking-phone"><i class="fa-solid fa-phone gold-text"></i> Teléfono / WhatsApp *</label>
+                            <input type="tel" id="booking-phone" class="form-control" placeholder="Ej. 1123058053" required>
+                        </div>
+                    </div>
+
+                    <!-- Cartel Informativo Orden de Llegada a partir de las 17:00 hs -->
+                    <div class="walkin-notice-box margin-top-md">
+                        <i class="fa-solid fa-circle-info gold-text fa-lg"></i>
+                        <span><strong>Nota Importante:</strong> A partir de las 17:00 hs la atención es por <strong>orden de llegada</strong> en el local.</span>
+                    </div>
+
+                    <div class="form-group full-width margin-top-md">
+                        <button type="submit" id="btn-submit-booking" class="btn btn-primary btn-block btn-lg">
+                            <i class="fa-solid fa-check-circle"></i> Confirmar Reserva
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase / Products Section -->
+    <section id="products" class="products-section section-padding bg-darker">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">CATÁLOGO EXPOSITOR</span>
+                <h2 class="section-title">INVENTARIO DE PRODUCTOS EN LOCAL</h2>
+                <p class="section-description">Productos de peinado y cuidado masculino disponibles para encargar o retirar en nuestro local.</p>
+                <div class="divider"></div>
+            </div>
+            <div class="products-grid" id="products-grid">
+                <!-- Se puebla dinámicamente desde client.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Location & Contact Section -->
+    <section id="location" class="location-section section-padding">
+        <div class="container">
+            <div class="location-grid">
+                <div class="location-info">
+                    <span class="section-subtitle">VISÍTANOS</span>
+                    <h2 class="section-title">NUESTRO LOCAL</h2>
+                    <div class="divider"></div>
+                    
+                    <ul class="contact-details">
+                        <li>
+                            <i class="fa-solid fa-location-dot gold-text"></i>
+                            <div>
+                                <strong>Dirección:</strong>
+                                <p>Calle El Maestro 636, General Belgrano, Provincia de Buenos Aires</p>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-clock gold-text"></i>
+                            <div>
+                                <strong>Horarios de Atención:</strong>
+                                <p>Lunes a Sábado: 09:00 - 16:00 hs (Cita previa)<br>17:00 a 20:00 hs (Orden de llegada)</p>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-brands fa-whatsapp gold-text"></i>
+                            <div>
+                                <strong>WhatsApp / Contacto:</strong>
+                                <p><a href="https://wa.me/5491123058053" target="_blank" style="color: #ffffff; font-weight: 600;">+54 9 11 2305-8053</a></p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="map-container">
+                    <iframe 
+                        title="Ubicación 96 Barber Shop General Belgrano"
+                        src="https://maps.google.com/maps?q=Calle%20El%20Maestro%20636%2C%20General%20Belgrano%2C%20Buenos%20Aires&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER PROFESIONAL DE MARCA (ESTRUCTURA DE 3 COLUMNAS REORGANIZADA) -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-main-grid">
+                <!-- Columna 1 (Izquierda): Logo de Marca -->
+                <div class="footer-brand-col">
+                    <img src="./assets/logo.jpg" alt="96 Barber Shop" class="footer-logo">
+                </div>
+
+                <!-- Columna 2 (Centro): Contacto y Ubicación -->
+                <div class="footer-info-col">
+                    <div class="footer-info-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span><strong>Ubicación:</strong> Calle El Maestro 636, General Belgrano, Provincia de Buenos Aires.</span>
+                    </div>
+                    <div class="footer-info-item">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        <span><strong>WhatsApp:</strong> <a href="https://wa.me/5491123058053" target="_blank" class="footer-phone-link">+54 9 11 2305-8053</a></span>
+                    </div>
+                </div>
+
+                <!-- Columna 3 (Derecha): Enlaces Rápida Alineados -->
+                <div class="footer-nav-col">
+                    <h4>Navegación</h4>
+                    <a href="#hero">Inicio</a>
+                    <a href="#services">Servicios</a>
+                    <a href="#barbers">Barberos</a>
+                    <a href="#products">Inventario de Productos</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="footer-copy">&copy; 2026 96 Barber Shop. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Confirmación premium de reserva -->
+    <div
+        id="booking-confirmation-modal"
+        class="booking-confirmation-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="booking-confirmation-title"
+        aria-describedby="booking-confirmation-summary"
+        hidden
+    >
+        <div class="booking-confirmation-card">
+            <div class="booking-confirmation-icon" aria-hidden="true">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <span class="booking-confirmation-kicker">Reserva registrada</span>
+            <h2 id="booking-confirmation-title">¡Turno Confirmado!</h2>
+            <p id="booking-confirmation-summary" class="booking-confirmation-summary"></p>
+            <button id="booking-confirmation-close" class="booking-confirmation-button" type="button">
+                <i class="fa-solid fa-check-circle" aria-hidden="true"></i> Entendido
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification Modal / Alert Toast -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/app/client.js"></script>
+</body>
+</html>

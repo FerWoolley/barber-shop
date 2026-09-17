@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function admin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/administrators/$(request.auth.uid))
+        && get(/databases/$(database)/documents/administrators/$(request.auth.uid)).data.active == true
+        && get(/databases/$(database)/documents/administrators/$(request.auth.uid)).data.role in ['admin', 'master'];
+    }
+    function named(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 200;
+    }
+    match /administrators/{uid} {
+      allow get: if request.auth != null && (request.auth.uid == uid || admin());
+      allow list: if admin();
+      // Account creation, password changes and removal use the Admin SDK only.
+      allow write: if false;
+    }
+    match /barbers/{id} {
+      allow read: if true;
+      allow create, update: if admin() && named(request.resource.data)
+        && request.resource.data.keys().hasOnly(['name', 'experience', 'photoUrl', 'bio', 'specialties', 'isActive', 'createdAt', 'updatedAt'])
+        && request.resource.data.isActive is bool
+        && request.resource.data.specialties is list;
+      allow delete: if admin();
+    }
+    match /services/{id} {
+      allow read: if true;
+      allow create, update: if admin() && named(request.resource.data)
+        && request.resource.data.keys().hasOnly(['name', 'price', 'durationMinutes', 'description', 'createdAt', 'updatedAt'])
+        && request.resource.data.price is number && request.resource.data.price >= 0
+        && request.resource.data.price <= 100000000
+        && request.resource.data.durationMinutes is number && request.resource.data.durationMinutes > 0;
+      allow delete: if admin();
+    }
+    match /products/{id} {
+      allow read: if true;
+      allow create, update: if admin() && named(request.resource.data)
+        && request.resource.data.keys().hasOnly(['name', 'category', 'description', 'imageUrl', 'createdAt', 'updatedAt'])
+        && request.resource.data.imageUrl is string && request.resource.data.imageUrl.size() <= 4096;
+      allow delete: if admin();
+    }
+    match /availability/{day} {
+      // Only date, barberId and occupied start times; never customer details.
+      allow get: if true;
+      allow list: if admin();
+      allow write: if false;
+    }
+    match /customers/{id} {
+      allow read: if admin();
+      allow update: if admin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['notes', 'updatedAt'])
+        && request.resource.data.notes is string && request.resource.data.notes.size() <= 5000;
+      // Phone uniqueness and profile creation/deletion are transactional functions.
+      allow create, delete: if false;
+    }
+    match /appointments/{id} {
+      allow read: if admin();
+      allow write: if false;
+    }
+    match /sales/{id} {
+      allow read: if admin();
+      allow write: if false;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

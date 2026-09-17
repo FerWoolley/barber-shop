@@ -1,0 +1,17 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function admin() {
+      return request.auth != null
+        && firestore.get(/databases/(default)/documents/administrators/$(request.auth.uid)).data.active == true
+        && firestore.get(/databases/(default)/documents/administrators/$(request.auth.uid)).data.role in ['admin', 'master'];
+    }
+    match /{folder}/{image} {
+      allow read: if folder in ['products', 'barbers'];
+      allow create, update: if folder in ['products', 'barbers'] && admin()
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp|gif)');
+      allow delete: if folder in ['products', 'barbers'] && admin();
+    }
+  }
+}
